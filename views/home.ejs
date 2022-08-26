@@ -3,4 +3,13 @@
 <h1>Home</h1>
 <p><%= ejsHome%></p>
 
+<%  info.forEach(function(post){   %>
+
+       <h1> <%= post.Title %> </h1>
+       <p> <%= post.Content.substring(0,100)+"..." %>
+          <a href="/posts/<%= post.Title%>">Read More</a>
+        </p>
+<%  });   %>
+
+
 <%- include("partials/footer"); -%>

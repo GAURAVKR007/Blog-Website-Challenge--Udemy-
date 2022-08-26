@@ -3,10 +3,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const _ = require('lodash');
 
-const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
-const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
-const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
+const homeStartingContent = "This is a public microblogging and social networking website developed by Gaurav Kumar Thakur in [2022] for educational purposes. This website allows users to post content or a blog. Feel free to use this website as much as you like and content of this website.";
+const aboutContent = "I make these kind of websites when I study and When I don't study I spend my time in Game, Eat, Sleep, Repeat. ";
+const contactContent = "Don't try to contact me. you might disturb me when i am sleeping";
 
 const app = express();
 
@@ -15,10 +16,13 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+let posts = [];
 
 app.get("/",function(req,res){
   res.render("home",{
-    ejsHome: homeStartingContent });
+    ejsHome: homeStartingContent,
+     info: posts
+   });
 })
 
 app.get("/about",function(req,res){
@@ -39,17 +43,35 @@ app.get("/compose",function(req,res){
 
 app.post("/compose",function(req,res){
   // console.log(req.body.postTitle);
-  // res.redirect("/");
 
-  const post = {
+var post = {
     Title: req.body.postTitle,
     Content: req.body.postBody
   };
 
+  posts.push(post);
+
+    res.redirect("/");
+
   // console.log(post);
 })
 
+app.get('/posts/:postName',function(req,res){
+  // console.log(req.params.postName);
 
+    var linkname = _.lowerCase(req.params.postName);
+  posts.forEach(function(posting){
+
+    var titleName = _.lowerCase(posting.Title);
+
+       if(linkname === titleName){
+         res.render("post",{
+           title: posting.Title,
+           content: posting.Content,
+         });
+       }
+  })
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
